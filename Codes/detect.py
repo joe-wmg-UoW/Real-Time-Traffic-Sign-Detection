@@ -100,11 +100,11 @@ def detect(save_img=False):
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
 
             # Print time (inference + NMS)
-            print('%sDone. (%.3fs)' % (s, t2 - t1))
-            try:
-                im0 = cv2.putText(im0, "FPS: %.2f" %(1/(t2-t1)), (30,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)
-            except:
-                pass
+            # print('%sDone. (%.3fs)' % (s, t2 - t1))
+            # try:
+            #     im0 = cv2.putText(im0, "FPS: %.2f" %(1/(t2-t1)), (30,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)
+            # except:
+            #     pass
             
             # saving the image or video to the Results directory.
             if save_img:
@@ -123,21 +123,26 @@ def detect(save_img=False):
                         vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*fourcc), fps, (w, h))
                     vid_writer.write(im0)
 
-            # Stream live results
-            if view_img:
-                cv2.imshow("Images", im0)
-                if dataset.is_it_web:
-                    if cv2.waitKey(1) & 0xFF == ord('q'):  # q to quit
-                        raise StopIteration
-                else:
-                    if dataset.video_flag[0]:
-                        if cv2.waitKey(1) & 0xFF == ord('q'):  # q to quit
-                            raise StopIteration
-                    else:
-                        if cv2.waitKey(0) & 0xFF == ord('q'):  # q to quit
-                            raise StopIteration
-            
-            
+            #Stream live results
+            # if view_img:
+            #     cv2.imshow("Images", im0)
+            #     if dataset.is_it_web:
+            #         if cv2.waitKey(1) & 0xFF == ord('q'):  # q to quit
+            #             raise StopIteration
+            #     else:
+            #         if dataset.video_flag[0]:
+            #             if cv2.waitKey(1) & 0xFF == ord('q'):  # q to quit
+            #                 raise StopIteration
+            #         else:
+            #             if cv2.waitKey(0) & 0xFF == ord('q'):  # q to quit
+            #                 raise StopIteration
+
+    if save_txt:  # If the flag is set
+        # Format the detected object's results and save them
+        for *xyxy, conf, cls in reversed(det):
+            line = '%.6f %.6f %.6f %.6f %.6f\n' % (*xyxy, conf)  # Save coordinates + confidence
+            with open(txt_path + '.txt', 'a') as f:
+                f.write(line)  # Append each detection result
 
     if save_txt or save_img:
         print('Results saved to %s' % save_dir)
